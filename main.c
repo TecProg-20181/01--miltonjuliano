@@ -104,19 +104,13 @@ Image espelhamento(Image img) {
                 }
 	return img;
 }
-// TA QUEBRADO ='(
 
 Image blur(Image img) {
 
-     /*unsigned int h; 
-     unsigned short int pixel[512][512][3];
-     unsigned int tamanho;
-     unsigned int w;*/
 
      int tamanho = 0;
      unsigned int w = img.w;
      unsigned int h= img.h;
-     //img.pixel[512][512][3];
 
      scanf("%d", &tamanho);
 
