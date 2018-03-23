@@ -11,6 +11,7 @@ typedef struct _image {
     // 0 -> r
     // 1 -> g
     // 2 -> b
+    //Pixel pixel [512][512]  <<< fazer isso e ver se roda;
     unsigned short int pixel[512][512][3];
     unsigned int w;
     unsigned int h;
@@ -33,12 +34,7 @@ int pixel_igual(Pixel p1, Pixel p2) {
 
 
 Image escala_de_cinza(Image img) {
-    /*for (unsigned int i = 0; i < img.h; ++i) {
-        for (unsigned int j = 0; j < img.w; ++j) {
-            print("%u", img.pixel[i][j][0] + img.pixel[i][j][1] + img.pixel[i][j][2]);
-        }
-    }*/
-
+  
     for (unsigned int i = 0; i < img.h; ++i) {
         for (unsigned int j = 0; j < img.w; ++j) {
             int media = img.pixel[i][j][0] +
@@ -85,21 +81,21 @@ Image espelhamento(Image img) {
                 if (horizontal == 1) w /= 2;
                 else h /= 2;
 
-                for (int i2 = 0; i2 < h; ++i2) {
+                for (int i = 0; i < h; ++i) {
                     for (int j = 0; j < w; ++j) {
-                        int x = i2, y = j;
+                        int x = i, y = j;
 
                         if (horizontal == 1) y = img.w - 1 - j;
-                        else x = img.h - 1 - i2;
+                        else x = img.h - 1 - i;
 
                         Pixel aux1;
-                        aux1.r = img.pixel[i2][j][0];
-                        aux1.g = img.pixel[i2][j][1];
-                        aux1.b = img.pixel[i2][j][2];
+                        aux1.r = img.pixel[i][j][0];
+                        aux1.g = img.pixel[i][j][1];
+                        aux1.b = img.pixel[i][j][2];
 
-                        img.pixel[i2][j][0] = img.pixel[x][y][0];
-                        img.pixel[i2][j][1] = img.pixel[x][y][1];
-                        img.pixel[i2][j][2] = img.pixel[x][y][2];
+                        img.pixel[i][j][0] = img.pixel[x][y][0];
+                        img.pixel[i][j][1] = img.pixel[x][y][1];
+                        img.pixel[i][j][2] = img.pixel[x][y][2];
 
                         img.pixel[x][y][0] = aux1.r;
                         img.pixel[x][y][1] = aux1.g;
@@ -108,18 +104,19 @@ Image espelhamento(Image img) {
                 }
 	return img;
 }
-// ta quebrado ='(
+// TA QUEBRADO ='(
 
 Image blur(Image img) {
-     Image blurred; 
 
-     unsigned int h; 
+     /*unsigned int h; 
      unsigned short int pixel[512][512][3];
      unsigned int tamanho;
-     unsigned int w;
+     unsigned int w;*/
 
-     blurred.w = img.w;
-     blurred.h = img.h;
+     int tamanho = 0;
+     unsigned int w = img.w;
+     unsigned int h= img.h;
+     //img.pixel[512][512][3];
 
      scanf("%d", &tamanho);
 
@@ -127,13 +124,13 @@ Image blur(Image img) {
         for (unsigned int j = 0; j < w; ++j) {
             Pixel media = {0, 0, 0};
 
-            int menor_h = (h - 1 > i + tamanho/2) ? i + tamanho/2 : h - 1;
-            int min_w = (w - 1 > j + tamanho/2) ? j + tamanho/2 : w - 1;
+            unsigned int menor_h = (img.h - 1 > i + tamanho/2) ? i + tamanho/2 : img.h - 1;
+            unsigned int min_w = (img.w - 1 > j + tamanho/2) ? j + tamanho/2 : img.w - 1;
             for(unsigned int x = (0 > i - tamanho/2 ? 0 : i - tamanho/2); x <= menor_h; ++x) {
                 for(unsigned int y = (0 > j - tamanho/2 ? 0 : j - tamanho/2); y <= min_w; ++y) {
-                    media.r += pixel[x][y][0];
-                    media.g += pixel[x][y][1];
-                    media.b += pixel[x][y][2];
+                    media.r += img.pixel[x][y][0];
+                    media.g += img.pixel[x][y][1];
+                    media.b += img.pixel[x][y][2];
                 }
             }
 
@@ -142,9 +139,9 @@ Image blur(Image img) {
             media.g /= tamanho * tamanho;
             media.b /= tamanho * tamanho;
 
-            blurred.pixel[i][j][0] = media.r;
-            blurred.pixel[i][j][1] = media.g;
-            blurred.pixel[i][j][2] = media.b;
+            img.pixel[i][j][0] = media.r;
+            img.pixel[i][j][1] = media.g;
+            img.pixel[i][j][2] = media.b;
         }
     }
 	return img;
@@ -187,10 +184,10 @@ void inverter_cores(unsigned short int pixel[512][512][3],
 Image cortar_imagem(Image img) {
     Image cortada;
     int x, y;
-    int w, h;            
-    
-    scanf("%d %d", &w, &h);
-    scanf("%d %d", &x, &y);
+    int w, h; 
+    scanf("%d %d", &x, &y);         
+    scanf("%d %d", &w, &h);    
+
     cortada.w = w;
     cortada.h = h;
 
@@ -207,11 +204,11 @@ Image cortar_imagem(Image img) {
 
 Image ler_imagem() {
 	Image img;
-	char tipo_imagem[4];
+	char p3[4];
 	int max_color;
 
 	//substituir p3 por tipo_imagem.
-	scanf("%s", tipo_imagem);
+	scanf("%s", p3);
 	scanf("%u %u %d", &img.w, &img.h, &max_color);
 	
 	for (unsigned int i = 0; i < img.h; ++i) {
@@ -219,12 +216,28 @@ Image ler_imagem() {
 	            scanf("%hu %hu %hu", &img.pixel[i][j][0],
                                		 &img.pixel[i][j][1],
                                 	 &img.pixel[i][j][2]);
-
         }
     }
     return img;
 }
 
+void imprimir_imagem(Image img){
+
+    printf("P3\n");
+    printf("%u %u\n255\n", img.w, img.h);
+
+    for (unsigned int i = 0; i < img.h; ++i) 
+    {
+        for (unsigned int j = 0; j < img.w; ++j) 
+        {
+            printf("%hu %hu %hu ", img.pixel[i][j][0],
+                                   img.pixel[i][j][1],
+                                   img.pixel[i][j][2]);
+        }
+        printf("\n");
+    }
+}
+ 
 
 int main() {
     Image img;
@@ -272,5 +285,7 @@ int main() {
         }
 
     }
+
+   imprimir_imagem(img);
     return 0;
 }
